@@ -3,7 +3,7 @@ package usersvc
 import "sync"
 
 type Repository interface {
-	GetUser(id string, password string) (User, error)
+	GetUser(id string) (User, error)
 	PutUser(u User) error
 	DeleteUser(u User) error
 }
@@ -19,7 +19,7 @@ func NewRepository() Repository {
 	}
 }
 
-func (r *inmemRepository) GetUser(id string, password string) (User, error) {
+func (r *inmemRepository) GetUser(id string) (User, error) {
 	r.mtx.RLock()
 	defer r.mtx.RUnlock()
 

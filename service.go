@@ -38,7 +38,12 @@ func NewUserService() Service {
 }
 
 func (s *userService) GetUser(ctx context.Context, id string, password string) (User, error) {
-	u, err := s.r.GetUser(id, password)
+	u, err := s.r.GetUser(id)
+
+	if u.Password != password {
+		return User{}, ErrNotFound
+	}
+
 	return u, err
 }
 
@@ -56,6 +61,13 @@ func (s *userService) DeleteUser(ctx context.Context, id string, u User) (User, 
 		return User{}, ErrInconsistentIDs
 	}
 
-	err := s.r.DeleteUser(u)
+	user, err := s.r.GetUser(id)
+
+	if u.Password != user.Password {
+		return User{}, ErrNotFound
+	}
+
+	err = s.r.DeleteUser(u)
+
 	return u, err
 }
