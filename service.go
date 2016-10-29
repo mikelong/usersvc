@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sync"
 
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )
 
@@ -22,6 +23,7 @@ type User struct {
 var (
 	ErrInconsistentIDs = errors.New("inconsistent IDs")
 	ErrNotFound        = errors.New("not found")
+	ErrInvalidPassword = errors.New("invalid password")
 )
 
 type userService struct {
@@ -40,16 +42,38 @@ func NewUserService() Service {
 func (s *userService) GetUser(ctx context.Context, id string, password string) (User, error) {
 	u, err := s.r.GetUser(id)
 
-	if u.Password != password {
+	if err != nil {
+		return User{}, err
+	}
+
+	h := []byte(u.HashedPassword)
+	p := []byte(password)
+
+	err = bcrypt.CompareHashAndPassword(h, p)
+
+	if err != nil {
 		return User{}, ErrNotFound
 	}
 
-	return u, err
+	return u, nil
 }
 
 func (s *userService) PutUser(ctx context.Context, id string, u User) (User, error) {
 	if id != u.ID {
 		return User{}, ErrInconsistentIDs
+	}
+
+	if validPassword(u.Password) {
+		h, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+
+		if err != nil {
+			return User{}, err
+		}
+
+		u.HashedPassword = string(h)
+		u.Password = ""
+	} else {
+		return User{}, ErrInvalidPassword
 	}
 
 	err := s.r.PutUser(u)
@@ -63,11 +87,20 @@ func (s *userService) DeleteUser(ctx context.Context, id string, u User) (User, 
 
 	user, err := s.r.GetUser(id)
 
-	if u.Password != user.Password {
+	h := []byte(user.HashedPassword)
+	p := []byte(u.Password)
+
+	err = bcrypt.CompareHashAndPassword(h, p)
+
+	if err != nil {
 		return User{}, ErrNotFound
 	}
 
 	err = s.r.DeleteUser(u)
 
 	return u, err
+}
+
+func validPassword(password string) bool {
+	return password != ""
 }
