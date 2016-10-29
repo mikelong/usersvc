@@ -2,7 +2,6 @@ package usersvc
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 
 	"golang.org/x/net/context"
@@ -26,28 +25,21 @@ var (
 )
 
 type userService struct {
+	r   Repository
 	mtx sync.RWMutex
 	m   map[string]User
 }
 
 func NewUserService() Service {
 	return &userService{
+		r: NewRepository(),
 		m: map[string]User{},
 	}
 }
 
 func (s *userService) GetUser(ctx context.Context, id string, password string) (User, error) {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-
-	u, ok := s.m[id]
-
-	if !ok {
-		return User{}, ErrNotFound
-	}
-
-	return u, nil
-
+	u, err := s.r.GetUser(id, password)
+	return u, err
 }
 
 func (s *userService) PutUser(ctx context.Context, id string, u User) (User, error) {
@@ -55,26 +47,15 @@ func (s *userService) PutUser(ctx context.Context, id string, u User) (User, err
 		return User{}, ErrInconsistentIDs
 	}
 
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-	s.m[id] = u
-	return u, nil
+	err := s.r.PutUser(u)
+	return u, err
 }
 
 func (s *userService) DeleteUser(ctx context.Context, id string, u User) (User, error) {
-	fmt.Printf(id)
-	fmt.Printf("\n")
-	fmt.Printf(u.ID)
-	fmt.Printf("\n")
 	if id != u.ID {
 		return User{}, ErrInconsistentIDs
 	}
 
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
-	if _, ok := s.m[id]; !ok {
-		return User{}, ErrNotFound
-	}
-	delete(s.m, id)
-	return u, nil
+	err := s.r.DeleteUser(u)
+	return u, err
 }
