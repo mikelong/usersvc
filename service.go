@@ -98,7 +98,7 @@ func (s *userService) DeleteUser(ctx context.Context, id string, u User) (User, 
 
 	err = s.r.DeleteUser(u)
 
-	return u, err
+	return user, err
 }
 
 func validPassword(password string) bool {

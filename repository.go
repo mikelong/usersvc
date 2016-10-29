@@ -26,7 +26,7 @@ type inmemRepository struct {
 }
 
 type key struct {
-	id string
+	ID string `json:"id"`
 }
 
 func NewRepository() Repository {
@@ -118,7 +118,7 @@ func (r *dynamoRepository) marshalKey(id string) map[string]*dynamodb.AttributeV
 		return nil
 	}
 
-	k, e := dynamodbattribute.MarshalMap(key{id: id})
+	k, e := dynamodbattribute.MarshalMap(key{ID: id})
 	r.err = e
 
 	return k
