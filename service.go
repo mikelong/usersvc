@@ -34,7 +34,7 @@ type userService struct {
 
 func NewUserService() Service {
 	return &userService{
-		r: NewRepository(),
+		r: NewDynamoRepository(),
 		m: map[string]User{},
 	}
 }
