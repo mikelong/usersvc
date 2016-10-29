@@ -52,7 +52,7 @@ func MakeHttpHandler(ctx context.Context, s Service) http.Handler {
 }
 
 func decodeGetUserRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
-	fmt.Printf("GET")
+	fmt.Printf("GET\n")
 
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -61,14 +61,13 @@ func decodeGetUserRequest(_ context.Context, r *http.Request) (request interface
 	}
 
 	r.ParseForm()
-	fmt.Printf(r.Form.Encode())
 	password := r.Form.Get("password")
 
 	return getUserRequest{ID: id, Password: password}, nil
 }
 
 func decodePutUserRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
-	fmt.Printf("PUT")
+	fmt.Printf("PUT\n")
 
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -88,7 +87,7 @@ func decodePutUserRequest(_ context.Context, r *http.Request) (request interface
 }
 
 func decodeDeleteUserRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
-	fmt.Printf("DELETE")
+	fmt.Printf("DELETE\n")
 
 	vars := mux.Vars(r)
 	id, ok := vars["id"]

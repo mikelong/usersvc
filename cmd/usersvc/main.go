@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var (
-		httpAddr = flag.String("http.addr", "localhost:8080", "HTTP listen address")
+		httpAddr = flag.String("http.addr", ":8080", "HTTP listen address")
 	)
 	flag.Parse()
 
@@ -34,13 +34,11 @@ func main() {
 		h = usersvc.MakeHttpHandler(ctx, svc)
 	}
 
-	fmt.Printf(*httpAddr)
+	fmt.Printf("Listening on: %s\n", *httpAddr)
 
 	go func() {
 		errs <- http.ListenAndServe(*httpAddr, h)
 	}()
 
 	logger.Log("exit", <-errs)
-
-	fmt.Printf("FOO")
 }
