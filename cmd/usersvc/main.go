@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/mikelong/usersvc"
-	"golang.org/x/net/context"
 )
 
 func main() {
@@ -20,18 +19,17 @@ func main() {
 	var logger log.Logger
 	{
 		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = log.NewContext(logger).With("ts", log.DefaultTimestampUTC)
-		logger = log.NewContext(logger).With("caller", log.DefaultCaller)
+		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+		logger = log.With(logger, "caller", log.DefaultCaller)
 	}
 
 	errs := make(chan error)
 
-	ctx := context.Background()
 	svc := usersvc.NewUserService()
 
 	var h http.Handler
 	{
-		h = usersvc.MakeHttpHandler(ctx, svc)
+		h = usersvc.MakeHttpHandler(svc)
 	}
 
 	fmt.Printf("Listening on: %s\n", *httpAddr)

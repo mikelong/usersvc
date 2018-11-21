@@ -1,11 +1,11 @@
 package usersvc
 
 import (
+	"context"
 	"errors"
 	"sync"
 
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/net/context"
 )
 
 type Service interface {

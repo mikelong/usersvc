@@ -1,8 +1,8 @@
-hash: d47381d1a7068ef66f27d2b8009abe8c8f840579e4ce719e2090812fa9010f7a
-updated: 2016-10-29T12:18:42.562741225-07:00
+hash: 8fb64a71c5e4c865c20cccdf4d51c949db76d6f1a3c44cac265a6f861be96f06
+updated: 2018-11-20T20:59:13.174795-08:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 6c577e9e7b08a6d10bad1c9703227cd0403a8dd7
+  version: 57d992f58b7e092da10921050426717f7944bd42
   subpackages:
   - aws
   - aws/awserr
@@ -14,12 +14,19 @@ imports:
   - aws/credentials/ec2rolecreds
   - aws/credentials/endpointcreds
   - aws/credentials/stscreds
+  - aws/crr
+  - aws/csm
   - aws/defaults
   - aws/ec2metadata
+  - aws/endpoints
   - aws/request
   - aws/session
   - aws/signer/v4
-  - private/endpoints
+  - internal/ini
+  - internal/sdkio
+  - internal/sdkrand
+  - internal/sdkuri
+  - internal/shareddefaults
   - private/protocol
   - private/protocol/json/jsonutil
   - private/protocol/jsonrpc
@@ -27,26 +34,21 @@ imports:
   - private/protocol/query/queryutil
   - private/protocol/rest
   - private/protocol/xml/xmlutil
-  - private/waiter
   - service/dynamodb
   - service/dynamodb/dynamodbattribute
   - service/sts
-- name: github.com/go-ini/ini
-  version: 6e4869b434bd001f6983749881c7ead3545887d8
 - name: github.com/go-kit/kit
-  version: 6fb874ce59bb45b2f60ee3d289829db02142ecc6
+  version: 12210fb6ace19e0496167bb3e667dcd91fa9f69b
   subpackages:
   - endpoint
   - log
   - transport/http
 - name: github.com/go-logfmt/logfmt
   version: d4327190ff838312623b09bfeb50d7c93c8d9c1d
-- name: github.com/go-stack/stack
-  version: 100eb0c0a9c5b306ca2fb4f165df21d80ada4b82
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 0eeaf8392f5b04950925b8a69fe70f110fa7cbfc
+  version: e3702bed27f0d39777b0b37b664b6280e8ef8fbf
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
 - name: github.com/kr/logfmt
@@ -60,5 +62,4 @@ imports:
   version: 3fe3024eef808ba2798cc1855690f49e2b860573
   subpackages:
   - context
-  - context/ctxhttp
 testImports: []

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"context"
+
 	"github.com/gorilla/mux"
-	"golang.org/x/net/context"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 )
@@ -18,30 +19,27 @@ var (
 	ErrBadRouting = errors.New("inconsistent mapping between route and handler (programmer error)")
 )
 
-func MakeHttpHandler(ctx context.Context, s Service) http.Handler {
+func MakeHttpHandler(s Service) http.Handler {
 	r := mux.NewRouter()
 	e := MakeServerEndpoints(s)
 
-	// GET /profiles/:id      fetchs a user
-	// PUT /users/:id         creates a user
-	// DELETE /profiles/:id   deletes a user
+	// GET /users/:id     fetchs a user
+	// PUT /users/:id     creates a user
+	// DELETE /users/:id  deletes a user
 
 	r.Methods("GET").Path("/users/{id}").Handler(httptransport.NewServer(
-		ctx,
 		e.GetUserEndpoint,
 		decodeGetUserRequest,
 		encodeResponse,
 	))
 
 	r.Methods("PUT").Path("/users/{id}").Handler(httptransport.NewServer(
-		ctx,
 		e.PutUserEndpoint,
 		decodePutUserRequest,
 		encodeResponse,
 	))
 
 	r.Methods("DELETE").Path("/users/{id}").Handler(httptransport.NewServer(
-		ctx,
 		e.DeleteUserEndpoint,
 		decodeDeleteUserRequest,
 		encodeResponse,
@@ -78,6 +76,7 @@ func decodePutUserRequest(_ context.Context, r *http.Request) (request interface
 	var user User
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		fmt.Println(r.Body)
 		return nil, err
 	}
 	return putUserRequest{
@@ -128,16 +127,6 @@ func codeFrom(err error) int {
 	case ErrInconsistentIDs:
 		return http.StatusBadRequest
 	default:
-		if e, ok := err.(httptransport.Error); ok {
-			switch e.Domain {
-			case httptransport.DomainDecode:
-				return http.StatusBadRequest
-			case httptransport.DomainDo:
-				return http.StatusServiceUnavailable
-			default:
-				return http.StatusInternalServerError
-			}
-		}
 		return http.StatusInternalServerError
 	}
 }
